@@ -34,12 +34,14 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
 
     private DotNetExportPlugin _exportPlugin;
 
+    private DotNetEditorExtensionSourceCodePlugin _sourceCodePlugin;
+
     public CodeEditorManagers CodeEditorManager { get; private set; }
 #nullable enable
 
     protected override string _GetPluginName() => ".NET";
 
-    private bool CreateProjectSolution()
+    internal bool CreateProjectSolution()
     {
         string? errorMessage = EditorProgress.Invoke("create_csharp_solution", SR.DotNetEditorPlugin_GenerateSolutionEditorProgressLabel, 2, progress =>
         {
@@ -352,16 +354,48 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
         _exportPlugin = new DotNetExportPlugin();
         AddExportPlugin(_exportPlugin);
 
+        // Source code plugin.
+        _sourceCodePlugin = new DotNetEditorExtensionSourceCodePlugin();
+
         // Status indicator panel.
         _statusIndicatorPanel = new StatusIndicatorPanel();
+        _statusIndicatorPanel.Workspace = _sourceCodePlugin.Workspace;
 
         CodeEditorManager = new CodeEditorManagers();
 
         EditorInternal.ModuleCompleteInitialization();
+
+        // Handle .NET workspace initialization state.
+        ProjectSettings.Singleton.SettingsChanged += UpdateWorkspaceProjectPath;
+    }
+
+    private void UpdateWorkspaceProjectPath()
+    {
+        PackedStringArray changedSettings = ProjectSettings.Singleton.GetChangedSettings();
+
+        bool shouldUpdate = false;
+        foreach (string setting in changedSettings)
+        {
+            if (setting.StartsWith("dotnet/", StringComparison.Ordinal))
+            {
+                shouldUpdate = true;
+                break;
+            }
+        }
+        if (!shouldUpdate)
+        {
+            // No .NET-related settings were changed, so we can ignore this.
+            return;
+        }
+
+        _sourceCodePlugin.Workspace.UpdateProjectPath(EditorPath.ProjectCSProjPath);
     }
 
     protected override void _ExitTree()
     {
+        ProjectSettings.Singleton.SettingsChanged -= UpdateWorkspaceProjectPath;
+        ProjectSettings.Singleton.SettingsChanged -= EditorPath.InvalidateCachedDirectories;
+
         CodeEditorManager?.Dispose();
 
         // Export plugin.
@@ -374,6 +408,9 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
         // Status indicator panel.
         _statusIndicatorPanel?.QueueFree();
 
+        // Source code plugin.
+        _sourceCodePlugin?.Dispose();
+
         // .NET build button.
         _toolBarBuildButton?.QueueFree();
 
@@ -381,8 +418,6 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
         _msbuildPanel?.QueueFree();
 
         _confirmCreateSlnDialog?.QueueFree();
-
-        ProjectSettings.Singleton.SettingsChanged -= EditorPath.InvalidateCachedDirectories;
 
         _singleton = null;
     }
