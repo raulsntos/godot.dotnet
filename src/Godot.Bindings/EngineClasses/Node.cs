@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Godot;
 
@@ -194,5 +195,21 @@ partial class Node
     public T? GetParentOrNull<T>() where T : class
     {
         return GetParent() as T;
+    }
+
+    /// <summary>
+    /// Enumerates all child nodes of the current node. This is a convenient wrapper around
+    /// <see cref="GetChild(int, bool)"/> and <see cref="GetChildCount"/> that avoids creating
+    /// a temporary array of child nodes (as returned by <see cref="GetChildren"/>).
+    /// </summary>
+    /// <param name="includeInternal">Whether to include internal children.</param>
+    /// <returns>An enumerable of child nodes.</returns>
+    public IEnumerable<Node> EnumerateChildren(bool includeInternal = false)
+    {
+        int count = GetChildCount(includeInternal);
+        for (int i = 0; i < count; i++)
+        {
+            yield return GetChild(i, includeInternal);
+        }
     }
 }
