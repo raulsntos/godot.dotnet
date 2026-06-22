@@ -136,7 +136,7 @@ internal sealed partial class BindingsData
 
             if (!string.IsNullOrEmpty(type.Documentation))
             {
-                type.Documentation = converter.Convert(type.Documentation, currentType);
+                type.Documentation = converter.Convert(type, type.Documentation, currentType);
             }
 
             foreach (var nestedType in type.NestedTypes)
@@ -148,7 +148,7 @@ internal sealed partial class BindingsData
             {
                 if (!string.IsNullOrEmpty(constructor.Documentation))
                 {
-                    constructor.Documentation = converter.Convert(constructor.Documentation, currentType);
+                    constructor.Documentation = converter.Convert(constructor, constructor.Documentation, currentType);
                 }
             }
 
@@ -156,7 +156,7 @@ internal sealed partial class BindingsData
             {
                 if (!string.IsNullOrEmpty(method.Documentation))
                 {
-                    method.Documentation = converter.Convert(method.Documentation, currentType);
+                    method.Documentation = converter.Convert(method, method.Documentation, currentType);
                 }
             }
 
@@ -164,7 +164,7 @@ internal sealed partial class BindingsData
             {
                 if (!string.IsNullOrEmpty(property.Documentation))
                 {
-                    property.Documentation = converter.Convert(property.Documentation, currentType);
+                    property.Documentation = converter.Convert(property, property.Documentation, currentType);
                 }
             }
 
@@ -172,7 +172,7 @@ internal sealed partial class BindingsData
             {
                 if (!string.IsNullOrEmpty(field.Documentation))
                 {
-                    field.Documentation = converter.Convert(field.Documentation, currentType);
+                    field.Documentation = converter.Convert(field, field.Documentation, currentType);
                 }
             }
 
@@ -180,7 +180,7 @@ internal sealed partial class BindingsData
             {
                 if (!string.IsNullOrEmpty(@event.Documentation))
                 {
-                    @event.Documentation = converter.Convert(@event.Documentation, currentType);
+                    @event.Documentation = converter.Convert(@event, @event.Documentation, currentType);
                 }
             }
         }

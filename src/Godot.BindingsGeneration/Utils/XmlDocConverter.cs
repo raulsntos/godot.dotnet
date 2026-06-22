@@ -20,10 +20,11 @@ internal sealed class XmlDocConverter
     /// <summary>
     /// Convert BBCode documentation to the XMLDoc format used by C#.
     /// </summary>
+    /// <param name="member">The member for which the documentation is being converted.</param>
     /// <param name="bbCode">Original BBCode documentation.</param>
     /// <param name="currentType">Current type to resolve member references that aren't fully qualified.</param>
     /// <returns>Converted XMLDoc string.</returns>
-    public string? Convert(string? bbCode, TypeInfo? currentType = null)
+    public string? Convert(MemberInfo member, string? bbCode, TypeInfo? currentType = null)
     {
         if (string.IsNullOrEmpty(bbCode))
         {
@@ -210,7 +211,7 @@ internal sealed class XmlDocConverter
                         default:
                         {
                             // Check if this tag is one of the reference tags.
-                            if (TryAppendReference(sb, startTag, currentType))
+                            if (TryAppendReference(sb, startTag, member, currentType))
                             {
                                 // Successfully appended a reference for this tag,
                                 // so we can move on to the next token.
@@ -326,7 +327,7 @@ internal sealed class XmlDocConverter
         }
     }
 
-    private bool TryAppendReference(StringBuilder sb, BBCodeStartTag startTag, TypeInfo? currentType)
+    private bool TryAppendReference(StringBuilder sb, BBCodeStartTag startTag, MemberInfo member, TypeInfo? currentType)
     {
         // HARDCODED: Special case for '@GlobalScope' and '@GDScript' references.
         if (!startTag.HasAttributes() && startTag.TagName.StartsWith('@'))
@@ -347,9 +348,19 @@ internal sealed class XmlDocConverter
             string parameterName = startTag.EnumerateAttributes().First().ToString();
             parameterName = NamingUtils.SnakeToCamelCase(parameterName);
 
-            sb.Append("<paramref name=\"");
-            sb.Append(parameterName);
-            sb.Append("\"/>");
+            if (member is EventInfo)
+            {
+                // Events don't have parameters, so we can't reference them.
+                sb.Append("<c>");
+                sb.Append(parameterName);
+                sb.Append("</c>");
+            }
+            else
+            {
+                sb.Append("<paramref name=\"");
+                sb.Append(parameterName);
+                sb.Append("\"/>");
+            }
             return true;
         }
 

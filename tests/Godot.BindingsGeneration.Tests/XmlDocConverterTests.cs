@@ -20,7 +20,9 @@ public class XmlDocConverterTests
             """;
 
         var xmlDocConverter = new XmlDocConverter(new TypeDB());
-        string? actual = xmlDocConverter.Convert(input);
+        var docMember = new MemberInfo("SomeMember");
+
+        string? actual = xmlDocConverter.Convert(docMember, input);
         Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
     }
 
@@ -29,7 +31,9 @@ public class XmlDocConverterTests
     {
         var xmlDocConverter = new XmlDocConverter(new TypeDB());
 
-        string? actual = xmlDocConverter.Convert("""
+        var docMember = new MemberInfo("SomeMember");
+
+        string? actual = xmlDocConverter.Convert(docMember, """
             [codeblock]
             static void Main(string[] args)
             {
@@ -64,7 +68,9 @@ public class XmlDocConverterTests
     {
         var xmlDocConverter = new XmlDocConverter(new TypeDB());
 
-        string? actual = xmlDocConverter.Convert("""
+        var docMember = new MemberInfo("SomeMember");
+
+        string? actual = xmlDocConverter.Convert(docMember, """
             [codeblock]
             [GodotClass]
             public partial class MyNode : Node
@@ -103,7 +109,9 @@ public class XmlDocConverterTests
     {
         var xmlDocConverter = new XmlDocConverter(new TypeDB());
 
-        string? actual = xmlDocConverter.Convert("""
+        var docMember = new MemberInfo("SomeMember");
+
+        string? actual = xmlDocConverter.Convert(docMember, """
             Some text before the code block.
             [codeblock]
             for (int i = 0; i < 3; i++) {
@@ -175,10 +183,53 @@ public class XmlDocConverterTests
     }
 
     [Fact]
+    public void ParameterReferences()
+    {
+        var typeDB = new TypeDB();
+        var xmlDocConverter = new XmlDocConverter(typeDB);
+
+        {
+            var docMember = new MemberInfo("SomeMember");
+
+            string? actual = xmlDocConverter.Convert(docMember, """
+            [param some_parameter] [param another_parameter]
+            """);
+
+            string expected = """
+            <summary>
+            <para><paramref name="someParameter"/> <paramref name="anotherParameter"/></para>
+            </summary>
+
+            """;
+
+            Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
+        }
+
+        {
+            var docMember = new EventInfo("SomeMember", new TypeInfo("EventHandler"));
+
+            string? actual = xmlDocConverter.Convert(docMember, """
+            [param some_parameter] [param another_parameter]
+            """);
+
+            string expected = """
+            <summary>
+            <para><c>someParameter</c> <c>anotherParameter</c></para>
+            </summary>
+
+            """;
+
+            Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
+        }
+    }
+
+    [Fact]
     public void References()
     {
         var typeDB = new TypeDB();
         var xmlDocConverter = new XmlDocConverter(typeDB);
+
+        var docMember = new MemberInfo("SomeMember");
 
         var currentType = new TypeInfo("SomeType", "SomeNamespace");
         typeDB.RegisterTypeName("SomeType", currentType);
@@ -247,7 +298,7 @@ public class XmlDocConverterTests
         typeDB.RegisterGlobalMemberMapping("SOME_GLOBAL_ENUM_MEMBER", "global::SomeNamespace.SomeGlobalEnum.SomeGlobalEnumMember");
         typeDB.RegisterGlobalMemberMapping("some_global_signal", "global::SomeNamespace.GD.SomeGlobalSignal");
 
-        string? actual = xmlDocConverter.Convert("""
+        string? actual = xmlDocConverter.Convert(docMember, """
             [method some_method] [method AnotherType.some_other_method]
             [member some_property] [method AnotherType.some_other_property]
             [constant SOME_CONSTANT] [constant AnotherType.SOME_OTHER_CONSTANT]
