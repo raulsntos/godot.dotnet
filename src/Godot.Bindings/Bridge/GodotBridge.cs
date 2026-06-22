@@ -155,6 +155,16 @@ public static partial class GodotBridge
                 _syncContext = null;
 
                 GodotRegistry.RemoveAllEditorPlugins();
+
+                // We must dispose all user-defined objects before unregistering their classes,
+                // because when the GDExtension class is unregistered, the native side loses track
+                // of the registered callbacks like 'Free_Native', which means we won't be able
+                // to dispose the strong GCHandle, which will prevent ALC unloading.
+                // We can't dispose all disposable instances because we must still preserve 'StringName'
+                // instances which are used when unregistering the classes. So we just dispose the objects.
+                // We don't just dispose user-defined objects here, because some objects may actually
+                // be resurrected user-defined objects that were created using a built-in type instead.
+                DisposablesTracker.DisposeAllObjects();
                 GodotRegistry.UnregisterAllClasses();
 
                 DisposablesTracker.DisposeAll();
