@@ -99,6 +99,82 @@ public class XmlDocConverterTests
     }
 
     [Fact]
+    public void CodeblockTagPreservesNestedBBCode2()
+    {
+        var xmlDocConverter = new XmlDocConverter(new TypeDB());
+
+        string? actual = xmlDocConverter.Convert("""
+            Some text before the code block.
+            [codeblock]
+            for (int i = 0; i < 3; i++) {
+                float base = a[i];
+                float blend = b[i];
+                if (base < 0.5) {
+                    result[i] = 2.0 * base * blend;
+                } else {
+                    result[i] = 1.0 - 2.0 * (1.0 - blend) * (1.0 - base);
+                }
+            }
+            [/codeblock]
+            [codeblocks]
+            [gdscript]
+            for (int i = 0; i < 3; i++) {
+                float base = a[i];
+                float blend = b[i];
+                if (base < 0.5) {
+                    result[i] = 2.0 * base * blend;
+                } else {
+                    result[i] = 1.0 - 2.0 * (1.0 - blend) * (1.0 - base);
+                }
+            }
+            [/gdscript]
+            [csharp]
+            for (int i = 0; i < 3; i++) {
+                float base = a[i];
+                float blend = b[i];
+                if (base < 0.5) {
+                    result[i] = 2.0 * base * blend;
+                } else {
+                    result[i] = 1.0 - 2.0 * (1.0 - blend) * (1.0 - base);
+                }
+            }
+            [/csharp]
+            [/codeblocks]
+            """);
+
+        string expected = """
+            <summary>
+            <para>Some text before the code block.</para>
+            <para><code>
+            for (int i = 0; i &lt; 3; i++) {
+                float base = a[i];
+                float blend = b[i];
+                if (base &lt; 0.5) {
+                    result[i] = 2.0 * base * blend;
+                } else {
+                    result[i] = 1.0 - 2.0 * (1.0 - blend) * (1.0 - base);
+                }
+            }
+            </code></para>
+            <para><code>
+            for (int i = 0; i &lt; 3; i++) {
+                float base = a[i];
+                float blend = b[i];
+                if (base &lt; 0.5) {
+                    result[i] = 2.0 * base * blend;
+                } else {
+                    result[i] = 1.0 - 2.0 * (1.0 - blend) * (1.0 - base);
+                }
+            }
+            </code></para>
+            </summary>
+
+            """;
+
+        Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
+    }
+
+    [Fact]
     public void References()
     {
         var typeDB = new TypeDB();

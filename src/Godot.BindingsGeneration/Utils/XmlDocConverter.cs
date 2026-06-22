@@ -35,7 +35,6 @@ internal sealed class XmlDocConverter
         sb.AppendLine("<summary>");
         sb.Append("<para>");
 
-        bool inCodeTag = false;
         bool inCodeBlocksTag = false;
 
         var parser = new BBCodeParser(bbCode);
@@ -44,6 +43,7 @@ internal sealed class XmlDocConverter
             switch (parser.TokenType)
             {
                 case BBCodeTokenType.Text:
+                {
                     if (inCodeBlocksTag)
                     {
                         // We are inside a [codeblocks] tag, ignore all text until we find
@@ -52,55 +52,76 @@ internal sealed class XmlDocConverter
                     }
 
                     ReadOnlySpan<char> textSpan = parser.ValueSpan;
-                    if (inCodeTag)
+
+                    // Split the text into paragraphs.
+                    int newLineIndex;
+                    while ((newLineIndex = textSpan.IndexOf('\n')) != -1)
                     {
-                        // We are inside a [code] or [csharp] tag, preserve the text exactly as-is.
-                        sb.AppendEscapedXml(textSpan);
+                        sb.AppendEscapedXml(textSpan.Slice(0, newLineIndex));
+                        sb.AppendLine("</para>");
+                        sb.Append("<para>");
+                        textSpan = textSpan.Slice(newLineIndex + 1);
                     }
-                    else
-                    {
-                        // We are outside of a [code] or [csharp] tag, so we need to split the text into paragraphs.
-                        int newLineIndex;
-                        while ((newLineIndex = textSpan.IndexOf('\n')) != -1)
-                        {
-                            sb.AppendEscapedXml(textSpan.Slice(0, newLineIndex));
-                            sb.AppendLine("</para>");
-                            sb.Append("<para>");
-                            textSpan = textSpan.Slice(newLineIndex + 1);
-                        }
-                        sb.AppendEscapedXml(textSpan);
-                    }
+                    sb.AppendEscapedXml(textSpan);
                     break;
+                }
 
                 case BBCodeTokenType.StartTag:
+                {
                     var startTag = parser.GetStartTag();
                     switch (startTag.TagName)
                     {
+                        case "csharp":
+                        {
+                            scoped ReadOnlySpan<char> content = ConsumeToMatchingEndTag(ref parser);
+                            sb.Append("<code>");
+                            sb.AppendEscapedXml(content);
+                            sb.Append("</code>");
+                            break;
+                        }
+
+                        case var _ when inCodeBlocksTag:
+                        {
+                            // We are inside a [codeblocks] tag, ignore all text until we find
+                            // the end tag [/codeblocks] or the [csharp][/csharp] tags.
+                            continue;
+                        }
+
                         case "b":
+                        {
                             sb.Append("<b>");
                             break;
+                        }
 
                         case "i":
+                        {
                             sb.Append("<i>");
                             break;
+                        }
 
                         case "u":
+                        {
                             sb.Append("<u>");
                             break;
+                        }
 
                         case "s":
                         case "center":
                         case "color":
                         case "font":
+                        {
                             // These tags are not supported in XMLDoc, but we need to explicitly handle them
                             // to avoid outputting the raw text. They don't seem to be used in the current
                             // documentation either, but we handle them just in case.
                             break;
+                        }
 
                         case "br":
+                        {
                             sb.AppendLine("</para>");
                             sb.Append("<para>");
                             break;
+                        }
 
                         case "kbd":
                         {
@@ -112,6 +133,7 @@ internal sealed class XmlDocConverter
                         }
 
                         case "url":
+                        {
                             scoped ReadOnlySpan<char> linkUrl;
                             scoped ReadOnlySpan<char> linkText;
                             if (startTag.HasAttributes())
@@ -129,14 +151,17 @@ internal sealed class XmlDocConverter
                             sb.Append(linkText);
                             sb.Append("</a>");
                             break;
+                        }
 
                         case "img":
+                        {
                             scoped ReadOnlySpan<char> imageUrl = ConsumeNextTextAndEndTag(ref parser);
                             // Not supported. Just append the bbcode.
                             sb.Append("[img]");
                             sb.Append(imageUrl);
                             sb.Append("[/img]");
                             break;
+                        }
 
                         case "code":
                         {
@@ -168,36 +193,22 @@ internal sealed class XmlDocConverter
                         }
 
                         case "codeblock":
+                        {
+                            scoped ReadOnlySpan<char> content = ConsumeToMatchingEndTag(ref parser);
                             sb.Append("<code>");
-                            inCodeTag = true;
+                            sb.AppendEscapedXml(content);
+                            sb.Append("</code>");
                             break;
+                        }
 
                         case "codeblocks":
+                        {
                             inCodeBlocksTag = true;
                             break;
-
-                        case "csharp":
-                            sb.Append("<code>");
-                            inCodeBlocksTag = false;
-                            inCodeTag = true;
-                            break;
+                        }
 
                         default:
-                            if (inCodeBlocksTag)
-                            {
-                                // We are inside a [codeblocks] tag, ignore all text until we find
-                                // the end tag [/codeblocks] or the [csharp][/csharp] tags.
-                                continue;
-                            }
-
-                            if (inCodeTag)
-                            {
-                                // We are inside a [codeblock] or [csharp] tag,
-                                // preserve the text exactly as-is, including unrecognized tags.
-                                sb.AppendEscapedXml(parser.ValueSpan);
-                                continue;
-                            }
-
+                        {
                             // Check if this tag is one of the reference tags.
                             if (TryAppendReference(sb, startTag, currentType))
                             {
@@ -210,63 +221,69 @@ internal sealed class XmlDocConverter
                             // just output the raw text.
                             sb.AppendEscapedXml(parser.ValueSpan);
                             break;
+                        }
                     }
                     break;
+                }
 
                 case BBCodeTokenType.EndTag:
+                {
                     // We only need to check for the end tags that aren't self-closing.
                     // We also consume some end tags in the StartTag case, so those won't show up here either.
                     var endTag = parser.GetEndTag();
                     switch (endTag.TagName)
                     {
+                        case "codeblocks":
+                        {
+                            inCodeBlocksTag = false;
+                            break;
+                        }
+
+                        case var _ when inCodeBlocksTag:
+                        {
+                            // We are inside a [codeblocks] tag, ignore all text until we find
+                            // the end tag [/codeblocks] or the [csharp][/csharp] tags.
+                            continue;
+                        }
+
                         case "b":
+                        {
                             sb.Append("</b>");
                             break;
+                        }
 
                         case "i":
+                        {
                             sb.Append("</i>");
                             break;
+                        }
 
                         case "u":
+                        {
                             sb.Append("</u>");
                             break;
+                        }
 
                         case "s":
                         case "center":
                         case "color":
                         case "font":
+                        {
                             // These tags are not supported in XMLDoc, but we need to explicitly handle them
                             // to avoid outputting the raw text. They don't seem to be used in the current
                             // documentation either, but we handle them just in case.
                             break;
-
-                        case "codeblock":
-                            sb.Append("</code>");
-                            inCodeTag = false;
-                            break;
-
-                        case "codeblocks":
-                            inCodeBlocksTag = false;
-                            break;
-
-                        case "csharp":
-                            sb.Append("</code>");
-                            inCodeBlocksTag = true;
-                            break;
+                        }
 
                         default:
-                            if (inCodeBlocksTag)
-                            {
-                                // We are inside a [codeblocks] tag, ignore all text until we find
-                                // the end tag [/codeblocks] or the [csharp][/csharp] tags.
-                                continue;
-                            }
-
+                        {
                             // Unrecognized end tag, just output the raw text.
                             sb.AppendEscapedXml(parser.ValueSpan);
                             break;
+                        }
                     }
                     break;
+                }
             }
         }
 
