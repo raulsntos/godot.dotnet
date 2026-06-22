@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Godot.BindingsGeneration.Marshallers;
 using Godot.BindingsGeneration.Reflection;
 
@@ -181,7 +182,36 @@ internal sealed class TypeDB
     /// <exception cref="ArgumentException">Member mapping already registered.</exception>
     public void RegisterMemberMapping(TypeInfo type, string engineMemberName, MemberInfo member)
     {
-        Func<string> lazyFullyQualifiedMemberName = () => $"{type.FullNameWithGlobal}.{member.Name}";
+        Func<string> lazyFullyQualifiedMemberName;
+
+        if (member is MethodInfo method)
+        {
+            // If the member is a method, add parameters to disambiguate overloads.
+            lazyFullyQualifiedMemberName = () =>
+            {
+                var sb = new StringBuilder();
+                sb.Append(type.FullNameWithGlobal);
+                sb.Append('.');
+                sb.Append(method.Name);
+                sb.Append('(');
+                for (int i = 0; i < method.Parameters.Count; i++)
+                {
+                    ParameterInfo? parameter = method.Parameters[i];
+                    sb.Append(parameter.Type.FullNameWithGlobal);
+                    if (i < method.Parameters.Count - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                sb.Append(')');
+                return sb.ToString();
+            };
+        }
+        else
+        {
+            lazyFullyQualifiedMemberName = () => $"{type.FullNameWithGlobal}.{member.Name}";
+        }
+
         RegisterLazyMemberMapping(type, engineMemberName, lazyFullyQualifiedMemberName);
 
         if (type.IsEnum && type.ContainingType is not null)

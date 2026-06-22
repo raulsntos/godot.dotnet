@@ -316,7 +316,7 @@ public class XmlDocConverterTests
 
         string expected = """
             <summary>
-            <para><see cref="global::SomeNamespace.SomeType.SomeMethod"/> <see cref="global::SomeNamespace.AnotherType.SomeOtherMethod"/></para>
+            <para><see cref="global::SomeNamespace.SomeType.SomeMethod()"/> <see cref="global::SomeNamespace.AnotherType.SomeOtherMethod()"/></para>
             <para><see cref="global::SomeNamespace.SomeType.SomeProperty"/> <see cref="global::SomeNamespace.AnotherType.SomeOtherProperty"/></para>
             <para><see cref="global::SomeNamespace.SomeType.SomeConstant"/> <see cref="global::SomeNamespace.AnotherType.SomeOtherConstant"/></para>
             <para><see cref="global::SomeNamespace.SomeType.SomeEnum.SomeEnumMember"/> <see cref="global::SomeNamespace.AnotherType.SomeOtherEnum.SomeOtherEnumMember"/></para>

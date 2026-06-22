@@ -469,6 +469,11 @@ internal sealed class XmlDocConverter
                 return Reference.Unknown(originalMemberName);
             }
 
+            // Generic type arguments in XMLDocs need to be converted to curly braces.
+            memberName = memberName
+                .Replace("<", "{")
+                .Replace(">", "}");
+
             return Reference.From(memberName);
         }
 
