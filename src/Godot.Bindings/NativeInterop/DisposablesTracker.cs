@@ -12,6 +12,31 @@ internal static class DisposablesTracker
 
     private static bool? _isStdOutVerbose;
 
+    internal static void DisposeAllObjects()
+    {
+        // We cache the result of IsStdOutVerbose() because the next time we call it,
+        // the OS singleton would already be disposed. And stdout verbosity won't change.
+        _isStdOutVerbose ??= OS.Singleton.IsStdOutVerbose();
+
+        if (_isStdOutVerbose.Value)
+        {
+            GD.Print("Disposing tracked GodotObjects...");
+        }
+
+        foreach (WeakReference<GodotObject> item in _godotObjectInstances.Keys)
+        {
+            if (item.TryGetTarget(out GodotObject? self))
+            {
+                self.Dispose();
+            }
+        }
+
+        if (_isStdOutVerbose.Value)
+        {
+            GD.Print("Finished disposing tracked GodotObjects.");
+        }
+    }
+
     internal static void DisposeAll()
     {
         // We cache the result of IsStdOutVerbose() because the next time we call it,
