@@ -34,11 +34,16 @@ internal static class EntryPointWriter
             sb.CloseBlock();
         }
 
-        sb.AppendLine("internal static class ClassDBExtensions");
+        sb.AppendLine("internal static class GodotRegistryExtensions");
+        sb.OpenBlock();
+
+        sb.AppendLine("extension (global::Godot.Bridge.GodotRegistry)");
         sb.OpenBlock();
 
         WriteInitializeUserTypes(sb, spec);
         WriteDeinitializeUserTypes(sb, spec);
+
+        sb.CloseBlock();
 
         sb.CloseBlock();
     }
@@ -48,7 +53,7 @@ internal static class EntryPointWriter
         sb.AppendLine("internal static void InitializeTypes(global::Godot.Bridge.InitializationLevel level)");
         sb.OpenBlock();
 
-        sb.AppendLine("ClassDBExtensions.InitializeUserTypes(level);");
+        sb.AppendLine("global::Godot.Bridge.GodotRegistry.InitializeUserTypes(level);");
 
         sb.CloseBlock();
     }
@@ -59,7 +64,7 @@ internal static class EntryPointWriter
         sb.AppendLine("internal static void DeinitializeTypes(global::Godot.Bridge.InitializationLevel level)");
         sb.OpenBlock();
 
-        sb.AppendLine("ClassDBExtensions.DeinitializeUserTypes(level);");
+        sb.AppendLine("global::Godot.Bridge.GodotRegistry.DeinitializeUserTypes(level);");
 
         sb.CloseBlock();
     }
