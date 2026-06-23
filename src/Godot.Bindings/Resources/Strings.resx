@@ -220,6 +220,9 @@
   <data name="InvalidOperation_CantInstantiateTypeConstructorNotRegistered" xml:space="preserve">
     <value>Can't instantiate type '{typeName}'. A constructor has not been registered for the type.</value>
   </data>
+  <data name="InvalidOperation_ClassNotRegistered" xml:space="preserve">
+    <value>Can't instantiate type '{typeName}'. The class has not been registered. Add the [GodotClass] attribute to the class or register it manually using the GodotRegistry.RegisterClass APIs.</value>
+  </data>
   <data name="InvalidOperation_DictionaryIsReadOnly" xml:space="preserve">
     <value>Dictionary instance is read-only.</value>
   </data>

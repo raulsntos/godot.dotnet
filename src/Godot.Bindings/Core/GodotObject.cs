@@ -91,6 +91,17 @@ partial class GodotObject : IDisposable
 
     private unsafe GodotObject(GodotObjectCreationOptions options)
     {
+        if (IsUserDefinedType())
+        {
+            // User-defined types must be registered within the engine.
+            // Otherwise, we can't free the GCHandle, because we rely on the Free_Native callback
+            // invoked by the engine, and that won't happen if the engine doesn't know about the type.
+            if (!GodotRegistry.IsClassRegistered(GetType()))
+            {
+                throw new InvalidOperationException(SR.FormatInvalidOperation_ClassNotRegistered(GetType()));
+            }
+        }
+
         GCHandle = new GCHandle<GodotObject>(this);
         nint gcHandlePtr = GCHandle<GodotObject>.ToIntPtr(GCHandle);
         _weakReferenceToSelf = DisposablesTracker.RegisterGodotObject(this);

@@ -40,6 +40,11 @@ public static partial class GodotRegistry
 
     private static readonly Dictionary<Type, ImmutableArray<NotificationHandler>> _notificationHandlersByType = [];
 
+    internal static bool IsClassRegistered(Type type)
+    {
+        return _registeredClassesByType.ContainsKey(type);
+    }
+
     internal static bool TryGetClassRegistrationContext(Type type, [NotNullWhen(true)] out ClassRegistrationContext? context)
     {
         return _registeredClassesByType.TryGetValue(type, out context);
