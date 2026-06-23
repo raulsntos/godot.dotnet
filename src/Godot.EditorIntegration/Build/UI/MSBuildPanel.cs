@@ -246,8 +246,7 @@ internal sealed partial class MSBuildPanel : EditorDock
         tabActions.AddChild(_buildMenuButton);
 
         var buildMenu = _buildMenuButton.GetPopup();
-        buildMenu.AddItem(SR.MSBuildPanel_BuildProject, (int)BuildMenuOptions.BuildProject);
-        buildMenu.AddShortcut(EditorInternal.EditorDefineShortcut(EditorShortcutNames.BuildSolution, SR.MSBuildPanel_BuildProject, EditorShortcutKeycodes.BuildProject));
+        buildMenu.AddShortcut(EditorInternal.EditorDefineShortcut(EditorShortcutNames.BuildSolution, SR.MSBuildPanel_BuildProject, EditorShortcutKeycodes.BuildProject), (int)BuildMenuOptions.BuildProject);
         buildMenu.AddItem(SR.MSBuildPanel_RebuildProject, (int)BuildMenuOptions.RebuildProject);
         buildMenu.AddItem(SR.MSBuildPanel_CleanProject, (int)BuildMenuOptions.CleanProject);
         buildMenu.IdPressed += BuildMenuOptionPressed;
