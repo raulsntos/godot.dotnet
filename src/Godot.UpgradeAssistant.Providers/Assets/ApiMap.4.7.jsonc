@@ -1,0 +1,114 @@
+// This file contains the mapping for Godot APIs that changed from Godot 4.6 to 4.7.
+// APIs are sorted by kind and then alphabetically.
+{
+  ////////////////////////////////////////////////////////////
+  //                       NAMESPACES                       //
+  ////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////
+  //                         TYPES                          //
+  ////////////////////////////////////////////////////////////
+
+  "Godot.DisplayServer.AccessibilityLiveMode": {
+    // Moved in https://github.com/godotengine/godot/pull/116839
+    "value": "Godot.AccessibilityServer.AccessibilityLiveMode",
+    "kind": "type",
+    "state": "Replaced",
+    "version": "4.7.0",
+  },
+
+  ////////////////////////////////////////////////////////////
+  //                         FIELDS                         //
+  ////////////////////////////////////////////////////////////
+
+  "Godot.AudioEffectSpectrumAnalyzer.PropertyName.TapBackPos": {
+    // Removed in https://github.com/godotengine/godot/pull/111043
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportAnimation": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.Animation",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportDiscardMeshesAndMaterials": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.DiscardMeshesAndMaterials",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportFailOnMissingDependencies": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.FailOnMissingDependencies",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportForceDisableMeshCompression": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.ForceDisableMeshCompression",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportGenerateTangentArrays": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.GenerateTangentArrays",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportScene": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.Scene",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.EditorSceneFormatImporter.ImportUseNamedSkinBinds": {
+    // Moved in https://github.com/godotengine/godot/pull/115788
+    "value": "Godot.EditorSceneFormatImporter.ImportFlags.UseNamedSkinBinds",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+  "Godot.RichTextLabel.ImageUpdateMask.WidthInPercent": {
+    // Renamed in https://github.com/godotengine/godot/pull/112617
+    "value": "Godot.RichTextLabel.ImageUpdateMask.WidthUnit",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+    "version": "4.7.0",
+  },
+
+  ////////////////////////////////////////////////////////////
+  //                       PROPERTIES                       //
+  ////////////////////////////////////////////////////////////
+
+  "Godot.AudioEffectSpectrumAnalyzer.TapBackPos": {
+    // Removed in https://github.com/godotengine/godot/pull/114355
+    "kind": "property",
+    "state": "Removed",
+    "version": "4.7.0",
+  },
+
+  ////////////////////////////////////////////////////////////
+  //                        METHODS                         //
+  ////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////
+  //                        EVENTS                          //
+  ////////////////////////////////////////////////////////////
+}
