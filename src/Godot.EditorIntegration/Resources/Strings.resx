@@ -211,6 +211,9 @@
   <data name="DotNetEditorPlugin_SaveSolutionFailed" xml:space="preserve">
     <value>Failed to save solution. Exception message: {exceptionMessage}</value>
   </data>
+  <data name="DotNetEditorPlugin_SolutionSerializerNotAvailableForMoniker" xml:space="preserve">
+    <value>Failed to save solution. Unable to find solution serializer for moniker '{solutionMoniker}'.</value>
+  </data>
   <data name="DotNetSdkFound" xml:space="preserve">
     <value>Found .NET SDK version '{sdkVersion}' at {sdkPath}</value>
   </data>

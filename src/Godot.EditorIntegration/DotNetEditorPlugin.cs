@@ -71,7 +71,13 @@ internal sealed partial class DotNetEditorPlugin : EditorPlugin
             try
             {
                 string solutionMoniker = EditorPath.ProjectSolutionPath;
-                SolutionSerializers.SlnFileV12.SaveAsync(solutionMoniker, solutionModel, CancellationToken.None).Wait();
+                var serializer = SolutionSerializers.GetSerializerByMoniker(solutionMoniker);
+                if (serializer is null)
+                {
+                    return SR.FormatDotNetEditorPlugin_SolutionSerializerNotAvailableForMoniker(Path.GetFileName(solutionMoniker));
+                }
+
+                serializer.SaveAsync(solutionMoniker, solutionModel, CancellationToken.None).Wait();
             }
             catch (IOException e)
             {
