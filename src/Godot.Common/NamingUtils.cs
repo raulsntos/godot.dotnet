@@ -39,6 +39,8 @@ public static class NamingUtils
     {
         { "AA", "AA" }, // Anti Aliasing
         { "AO", "AO" }, // Ambient Occlusion
+        { "AxB", "AxB" },
+        { "BxA", "BxA" },
         { "FILENAME", "FileName" },
         { "FADEIN", "FadeIn" },
         { "FADEOUT", "FadeOut" },

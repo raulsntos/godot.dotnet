@@ -2395,6 +2395,12 @@
     "isStatic": true,
     "messageId": "ApiMapMessage_EnumMaxRemoved",
   },
+  "Godot.CanvasItem.OversamplingWithScaleEnum.Max": {
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
   "Godot.CanvasItem.TextureFilterEnum.Max": {
     "kind": "field",
     "state": "Removed",
@@ -2905,6 +2911,12 @@
     "isStatic": true,
     "messageId": "ApiMapMessage_RemovedInternals",
   },
+  "Godot.GodotObject.NotificationPostinitialize": {
+    "value": "Godot.GodotObject.NotificationPostInitialize",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
   "Godot.GpuParticlesCollisionHeightField3D.ResolutionEnum.Max": {
     "kind": "field",
     "state": "Removed",
@@ -3014,6 +3026,30 @@
     "messageId": "ApiMapMessage_RemovedInternals",
   },
   "Godot.Input.MouseModeEnum.Max": {
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
+  "Godot.JoyAxis.Max": {
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
+  "Godot.JoyAxis.SdlMax": {
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
+  "Godot.JoyButton.Max": {
+    "kind": "field",
+    "state": "Removed",
+    "isStatic": true,
+    "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
+  "Godot.JoyButton.SdlMax": {
     "kind": "field",
     "state": "Removed",
     "isStatic": true,
@@ -4591,17 +4627,65 @@
     "isStatic": true,
     "messageId": "ApiMapMessage_EnumMaxRemoved",
   },
+  "Godot.VisualShaderNodeTransformOp.OperatorEnum.Axb": {
+    "value": "Godot.VisualShaderNodeTransformOp.OperatorEnum.AxB",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
+  "Godot.VisualShaderNodeTransformOp.OperatorEnum.AxbComp": {
+    "value": "Godot.VisualShaderNodeTransformOp.OperatorEnum.AxBComp",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
+  "Godot.VisualShaderNodeTransformOp.OperatorEnum.Bxa": {
+    "value": "Godot.VisualShaderNodeTransformOp.OperatorEnum.BxA",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
+  "Godot.VisualShaderNodeTransformOp.OperatorEnum.BxaComp": {
+    "value": "Godot.VisualShaderNodeTransformOp.OperatorEnum.BxAComp",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
   "Godot.VisualShaderNodeTransformOp.OperatorEnum.Max": {
     "kind": "field",
     "state": "Removed",
     "isStatic": true,
     "messageId": "ApiMapMessage_EnumMaxRemoved",
   },
+  "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Axb": {
+    "value": "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.AxB",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
+  "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Bxa": {
+    "value": "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.BxA",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
   "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Max": {
     "kind": "field",
     "state": "Removed",
     "isStatic": true,
     "messageId": "ApiMapMessage_EnumMaxRemoved",
+  },
+  "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3X3Axb": {
+    "value": "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3X3AxB",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
+  },
+  "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3X3Bxa": {
+    "value": "Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3X3BxA",
+    "kind": "field",
+    "state": "Replaced",
+    "isStatic": true,
   },
   "Godot.VisualShaderNodeUIntFunc.FunctionEnum.Max": {
     "kind": "field",
@@ -5075,6 +5159,20 @@
     "state": "Removed",
     "isStatic": true,
     "messageId": "ApiMapMessage_RemovedInternals",
+  },
+  "Godot.DisplayServer.AccessibilityUpdateSetLive": {
+    // Moved in https://github.com/godotengine/godot/pull/116839
+    "value": "Godot.AccessibilityServer.Singleton.UpdateSetLive",
+    "kind": "method",
+    "state": "Replaced",
+    "isStatic": true,
+    "isSingleton": true,
+  },
+  "Godot.DisplayServerInstance.AccessibilityUpdateSetLive": {
+    // Moved in https://github.com/godotengine/godot/pull/116839
+    "value": "Godot.AccessibilityServer.UpdateSetLive",
+    "kind": "method",
+    "state": "Replaced",
   },
   "Godot.EditorExportPlatform.GetOsName": {
     "value": "Godot.EditorExportPlatform.GetOSName",
