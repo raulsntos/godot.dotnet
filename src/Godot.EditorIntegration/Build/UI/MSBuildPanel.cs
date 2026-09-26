@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using Godot.EditorIntegration.Internals;
 
@@ -22,7 +23,7 @@ internal sealed partial class MSBuildPanel : EditorDock
     public BuildResult? LastBuildResult { get; private set; }
 
     private readonly Lock _pendingBuildLogTextLock = new();
-    private string _pendingBuildLogText = string.Empty;
+    private readonly StringBuilder _pendingBuildLogText = new();
 
     public MSBuildPanel()
     {
@@ -200,8 +201,8 @@ internal sealed partial class MSBuildPanel : EditorDock
     {
         lock (_pendingBuildLogTextLock)
         {
-            _outputView.Append(_pendingBuildLogText);
-            _pendingBuildLogText = string.Empty;
+            _outputView.Append(_pendingBuildLogText.ToString());
+            _pendingBuildLogText.Clear();
         }
     }
 
@@ -215,7 +216,7 @@ internal sealed partial class MSBuildPanel : EditorDock
                 // so we need to use CallDeferred.
                 Callable.From(UpdateBuildLogText).CallDeferred();
             }
-            _pendingBuildLogText += $"{text}\n";
+            _pendingBuildLogText.AppendLine(text);
         }
     }
 
