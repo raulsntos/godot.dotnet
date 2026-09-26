@@ -86,6 +86,12 @@ internal sealed class AndroidPlatformExporter : PlatformExporter
         {
             string relativePath = Path.GetRelativePath(outputPath, path);
 
+            if (IsStaticLibrary(path))
+            {
+                // Don't export static libraries.
+                continue;
+            }
+
             if (IsSharedObject(path) || ShouldExportJar(path, exportedJars))
             {
                 string target = Path.Join(projectDataDirName, Path.GetDirectoryName(relativePath));
@@ -101,10 +107,14 @@ internal sealed class AndroidPlatformExporter : PlatformExporter
             }
         }
 
+        static bool IsStaticLibrary(string path)
+        {
+            return path.EndsWith(".a", StringComparison.OrdinalIgnoreCase);
+        }
+
         static bool IsSharedObject(string path)
         {
             if (path.EndsWith(".so", StringComparison.OrdinalIgnoreCase)
-             || path.EndsWith(".a", StringComparison.OrdinalIgnoreCase)
              || path.EndsWith(".dex", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
