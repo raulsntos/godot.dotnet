@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Godot.NativeInterop;
 
 namespace Godot;
@@ -112,6 +113,91 @@ public sealed class NodePath : IDisposable, IEquatable<NodePath?>
             using NativeGodotString src = NativeGodotString.Create(path);
             NativeValue = NativeGodotNodePath.Create(src).AsMovable();
             _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+        }
+    }
+
+    /// <summary>
+    /// Constructs a <see cref="NodePath"/> from a string <paramref name="path"/>,
+    /// e.g.: <c>"Path2D/PathFollow2D/Sprite2D:texture:size"</c>.
+    /// A path is absolute if it starts with a slash. Absolute paths
+    /// are only valid in the global scene tree, not within individual
+    /// scenes. In a relative path, <c>"."</c> and <c>".."</c> indicate
+    /// the current node and its parent.
+    /// The "subnames" optionally included after the path to the target
+    /// node can point to resources or properties, and can also be nested.
+    /// </summary>
+    /// <example>
+    /// Examples of valid NodePaths (assuming that those nodes exist and
+    /// have the referenced resources or properties):
+    /// <code>
+    /// // Points to the Sprite2D node.
+    /// "Path2D/PathFollow2D/Sprite2D"
+    /// // Points to the Sprite2D node and its "texture" resource.
+    /// // GetNode() would retrieve "Sprite2D", while GetNodeAndResource()
+    /// // would retrieve both the Sprite2D node and the "texture" resource.
+    /// "Path2D/PathFollow2D/Sprite2D:texture"
+    /// // Points to the Sprite2D node and its "position" property.
+    /// "Path2D/PathFollow2D/Sprite2D:position"
+    /// // Points to the Sprite2D node and the "x" component of its "position" property.
+    /// "Path2D/PathFollow2D/Sprite2D:position:x"
+    /// // Absolute path (from "root")
+    /// "/root/Level/Path2D"
+    /// </code>
+    /// </example>
+    /// <param name="path">A string that represents a path in a scene tree.</param>
+    public NodePath(ReadOnlySpan<char> path)
+    {
+        if (!path.IsEmpty)
+        {
+            using NativeGodotString src = NativeGodotString.Create(path);
+            NativeValue = NativeGodotNodePath.Create(src).AsMovable();
+            _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+        }
+    }
+
+    /// <summary>
+    /// Constructs a <see cref="NodePath"/> from a string <paramref name="path"/>,
+    /// e.g.: <c>"Path2D/PathFollow2D/Sprite2D:texture:size"</c>.
+    /// A path is absolute if it starts with a slash. Absolute paths
+    /// are only valid in the global scene tree, not within individual
+    /// scenes. In a relative path, <c>"."</c> and <c>".."</c> indicate
+    /// the current node and its parent.
+    /// The "subnames" optionally included after the path to the target
+    /// node can point to resources or properties, and can also be nested.
+    /// </summary>
+    /// <example>
+    /// Examples of valid NodePaths (assuming that those nodes exist and
+    /// have the referenced resources or properties):
+    /// <code>
+    /// // Points to the Sprite2D node.
+    /// "Path2D/PathFollow2D/Sprite2D"
+    /// // Points to the Sprite2D node and its "texture" resource.
+    /// // GetNode() would retrieve "Sprite2D", while GetNodeAndResource()
+    /// // would retrieve both the Sprite2D node and the "texture" resource.
+    /// "Path2D/PathFollow2D/Sprite2D:texture"
+    /// // Points to the Sprite2D node and its "position" property.
+    /// "Path2D/PathFollow2D/Sprite2D:position"
+    /// // Points to the Sprite2D node and the "x" component of its "position" property.
+    /// "Path2D/PathFollow2D/Sprite2D:position:x"
+    /// // Absolute path (from "root")
+    /// "/root/Level/Path2D"
+    /// </code>
+    /// </example>
+    /// <param name="path">A string that represents a path in a scene tree.</param>
+    public NodePath(ref DefaultInterpolatedStringHandler path)
+    {
+        try
+        {
+            if (!path.Text.IsEmpty)
+            {
+                using NativeGodotString src = NativeGodotString.Create(path.Text);
+                NativeValue = NativeGodotNodePath.Create(src).AsMovable();
+                _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+            }
+        }
+        finally
+        {
+            path.Clear();
         }
     }
 

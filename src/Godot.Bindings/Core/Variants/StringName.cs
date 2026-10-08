@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Godot.NativeInterop;
 
@@ -111,6 +112,39 @@ public sealed class StringName : IDisposable, IEquatable<StringName?>
         {
             NativeValue = NativeGodotStringName.Create(name).AsMovable();
             _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+        }
+    }
+
+    /// <summary>
+    /// Constructs a <see cref="StringName"/> from the given <paramref name="name"/> string.
+    /// </summary>
+    /// <param name="name">String to construct the <see cref="StringName"/> from.</param>
+    public StringName(ReadOnlySpan<char> name)
+    {
+        if (!name.IsEmpty)
+        {
+            NativeValue = NativeGodotStringName.Create(name).AsMovable();
+            _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+        }
+    }
+
+    /// <summary>
+    /// Constructs a <see cref="StringName"/> from the given <paramref name="name"/> string.
+    /// </summary>
+    /// <param name="name">String to construct the <see cref="StringName"/> from.</param>
+    public StringName(ref DefaultInterpolatedStringHandler name)
+    {
+        try
+        {
+            if (!name.Text.IsEmpty)
+            {
+                NativeValue = NativeGodotStringName.Create(name.Text).AsMovable();
+                _weakReferenceToSelf = DisposablesTracker.RegisterDisposable(this);
+            }
+        }
+        finally
+        {
+            name.Clear();
         }
     }
 
